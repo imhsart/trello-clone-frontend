@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
+
+// check th code in the repository and video starts from 20;00
+
 
 const Login = () => {
   const [userInputData, setUserInputData] = useState({
@@ -9,22 +13,23 @@ const Login = () => {
     password: ''
   })
   const navigate = useNavigate()
-
   function handleInputChange(e){
     setUserInputData({
       ...userInputData,
       [e.target.name] : e.target.value
     })
   }
-  function handleFormSubmit(e){
+  async function handleFormSubmit(e){
     e.preventDefault()
-    if(userInputData.password && (userInputData.email || userInputData.username)){
-      axios.post(`${import.meta.env.VITE_BACKEND_USER_URL}/users/login`, userInputData, {withCredentials: true})
-      .then(response => {
-        alert(response.data.message)
+    try{
+      if(userInputData.password && (userInputData.email || userInputData.username)){
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login`, userInputData, {withCredentials: true})
+        toast.success(response.data.message)
         navigate('/dashboard')
-      })
-      .catch((error) => alert(error))
+      }
+    }
+    catch(error){
+      toast.error(error?.response?.data?.message || "Login failed. Please try again.")
     }
     setUserInputData({email: '', username: '', password: ''})
   }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const [userData, setUserData] = useState({
@@ -27,9 +28,9 @@ const Signup = () => {
      if(!(userData.firstname && userData.lastname && userData.username && userData.email && userData.DOB && userData.gender && userData.password)){
       return
      }
-    axios.post(`${import.meta.env.VITE_BACKEND_USER_URL}/users/signup`, userData)
-    .then(data => console.log(data))
-    .catch(error => console.log(error))
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/signup`, userData)
+    .then(data => toast.success(data.data.message))
+    .catch(error => toast.error(error?.response?.data?.message || "Sign Up failed. Please try again."))
     .finally(() => {
       setUserData({firstname: '', lastname: '', username: '', email: '', DOB: '', gender: '', password: ''})
     })

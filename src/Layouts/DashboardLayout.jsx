@@ -3,10 +3,12 @@ import Navbar from "../Components/Navbar"
 
 const DashboardLayout = () => {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <Outlet />
-    </>
+      <main className="flex-1">
+        <Outlet />
+      </main>
+    </div>
   )
 }
 
