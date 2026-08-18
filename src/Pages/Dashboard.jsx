@@ -1,19 +1,58 @@
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect, useCallback } from "react"
 import { UserContext } from "../Utils/UserContext"
 import AddNewTask from "../Components/AddNewTask"
+import axios from "axios"
+import toast from "react-hot-toast"
 
 
 const Dashboard = () => {
   const [allTasks, setAllTasks] = useState([])
   const { userData } = useContext(UserContext)
+  const [isLoading, setIsLoading] = useState(true)
+  const [addStatus, setAddStatus] = useState(null)
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false)
+  const priorityStyles = {
+    low: {
+      badge: "border-emerald-400/30 bg-emerald-400/10",
+      text: "text-emerald-300",
+      dot: "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]",
+    },
+    medium: {
+      badge: "border-yellow-400/30 bg-yellow-400/10",
+      text: "text-yellow-300",
+      dot: "bg-yellow-400 shadow-[0_0_6px_rgba(250,204,21,0.9)]",
+    },
+    high: {
+      badge: "border-red-400/30 bg-red-400/10",
+      text: "text-red-300",
+      dot: "bg-red-400 shadow-[0_0_6px_rgba(248,113,113,0.9)]",
+    },
+  };
 
-  function handleAddTask() {
+  const getTasksData = useCallback(async () => {
+    try{
+      setIsLoading(true)
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/tasks/get`, {withCredentials: true})
+      setAllTasks(response.data.data)
+    }
+    catch(error){
+      toast.error(error.response?.data?.message || 'Failed to fetch tasks.')
+    }finally{
+      setIsLoading(false)
+    }
+  }, []);
+
+  useEffect(() => {
+    getTasksData()
+  }, [getTasksData])
+
+  function handleAddTask(specialStatus) {
     setIsAddTaskOpen(true)
+    setAddStatus(specialStatus)
   }
 
   return (
-    <div className="min-h-full bg-[#080D1A] px-8 py-6 font-mono">
+    <div className=" flex-1 bg-[#080D1A] px-14 py-6 font-mono">
       <div className="relative mb-8 overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-r from-[#0F172A] via-[#15132F] to-[#211044] px-6 py-5">
         {/* Decorative purple glow */}
         <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-96 rounded-full bg-violet-600/10 blur-3xl" />
@@ -38,7 +77,7 @@ const Dashboard = () => {
               </p>
             </div>
           </div>
-          <button onClick={handleAddTask} className="flex cursor-pointer items-center gap-2 rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-950/30 transition hover:bg-violet-500 active:translate-y-px">
+          <button onClick={() => handleAddTask("")} className="flex cursor-pointer items-center gap-2 rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-950/30 transition hover:bg-violet-500 active:translate-y-px">
             <span className="text-lg leading-none">+</span>
             Add Task
           </button>
@@ -67,14 +106,30 @@ const Dashboard = () => {
                 To Do
               </h2>
             </div>
-            <button onClick={handleAddTask} className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-violet-400 transition hover:bg-violet-500/10 hover:text-violet-300">
+            <button onClick={() => handleAddTask("pending")} className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-violet-400 transition hover:bg-violet-500/10 hover:text-violet-300">
               <span className="text-lg leading-none">+</span>
               Add a task
             </button>
           </div>
           {/* Tasks */}
           <div className="mt-5 space-y-3 px-6">
-
+            {
+              allTasks.map(task => {
+                if(task.status!== "pending") return null
+                return (
+                  <div key={task._id} className="group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-violet-400/60 hover:shadow-[0_0_18px_rgba(167,139,250,0.22)]">
+                    <div className="mb-3 flex items-start justify-between gap-4">
+                      <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
+                      <span className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border ${priorityStyles[task.priority].badge} ${priorityStyles[task.priority].text}`}>
+                        <span className={`h-1.5 w-1.5 rounded-full ${priorityStyles[task.priority].dot}`} />
+                          {task.priority}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-6 text-slate-400">{task.description}</p>
+                  </div>
+                )
+              })
+            }
           </div>
         </div>
         {/*  IN PROGRESS  */}
@@ -98,14 +153,30 @@ const Dashboard = () => {
                 In Progress
               </h2>
             </div>
-            <button onClick={handleAddTask} className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-violet-400 transition hover:bg-violet-500/10 hover:text-violet-300">
+            <button onClick={() => handleAddTask("inprogress")} className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-violet-400 transition hover:bg-violet-500/10 hover:text-violet-300">
               <span className="text-lg leading-none">+</span>
               Add a task
             </button>
           </div>
           {/* Tasks */}
           <div className="mt-5 space-y-3 px-6">
-
+            {
+              allTasks.map(task => {
+                if(task.status!== "inprogress") return null
+                return (
+                  <div key={task._id} className="group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-yellow-400/60 hover:shadow-[0_0_18px_rgba(250,204,21,0.22)]">
+                    <div className="mb-3 flex items-start justify-between gap-4">
+                      <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
+                      <span className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border ${priorityStyles[task.priority].badge} ${priorityStyles[task.priority].text}`}>
+                        <span className={`h-1.5 w-1.5 rounded-full ${priorityStyles[task.priority].dot}`} />
+                          {task.priority}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-6 text-slate-400">{task.description}</p>
+                  </div>
+                )
+              })
+            }
           </div>
         </div>
         {/*  DONE  */}
@@ -122,20 +193,36 @@ const Dashboard = () => {
                 Done
               </h2>
             </div>
-            <button onClick={handleAddTask} className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-violet-400 transition hover:bg-violet-500/10 hover:text-violet-300">
+            <button onClick={() => handleAddTask("complete")} className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-violet-400 transition hover:bg-violet-500/10 hover:text-violet-300">
               <span className="text-lg leading-none">+</span>
               Add a task
             </button>
           </div>
           {/* Tasks */}
           <div className="mt-5 space-y-3 px-6">
-
+            {
+              allTasks.map(task => {
+                if(task.status!== "complete") return null
+                return (
+                <div key={task._id} className="group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-emerald-400/60 hover:shadow-[0_0_18px_rgba(52,211,153,0.22)]">
+                    <div className="mb-3 flex items-start justify-between gap-4">
+                      <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
+                      <span className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border ${priorityStyles[task.priority].badge} ${priorityStyles[task.priority].text}`}>
+                        <span className={`h-1.5 w-1.5 rounded-full ${priorityStyles[task.priority].dot}`} />
+                          {task.priority}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-6 text-slate-400">{task.description}</p>
+                  </div>
+                )
+              })
+            }
           </div>
         </div>
       </div>
       {/*  EMPTY BOARD  */}
       {
-        allTasks.length === 0 && (
+        !isLoading && allTasks.length === 0 && (
           <div className="flex flex-col items-center justify-center pt-5 pb-2 text-center">
             <h2 className="mt-2 text-2xl font-bold text-slate-100">
               This board is empty
@@ -154,9 +241,12 @@ const Dashboard = () => {
       {
         isAddTaskOpen && (
           <AddNewTask
+            addStatus={addStatus}
             onClose={() => setIsAddTaskOpen(false)}
             onTaskCreated={() => {
               setIsAddTaskOpen(false)
+              getTasksData()
+              setAddStatus("")
             }}
           />
         )
