@@ -51,8 +51,10 @@ const Dashboard = () => {
     setAddStatus(specialStatus)
   }
 
+
+
   return (
-    <div className=" flex-1 bg-[#080D1A] px-14 py-6 font-mono">
+    <div className="flex flex-col flex-1 bg-[#080D1A] px-3 py-6 font-mono md:px-8 xl:px-14">
       <div className="relative mb-8 overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-r from-[#0F172A] via-[#15132F] to-[#211044] px-6 py-5">
         {/* Decorative purple glow */}
         <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-96 rounded-full bg-violet-600/10 blur-3xl" />
@@ -65,13 +67,13 @@ const Dashboard = () => {
         <div className="pointer-events-none absolute right-[13%] top-8 text-violet-400/15">✦</div>
         <div className="pointer-events-none absolute right-[7%] top-16 text-violet-500/20">✦</div>
         {/* Banner content */}
-        <div className="relative flex items-center justify-between">
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             {/* Greeting icon */}
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-violet-600/30 text-2xl">👋</div>
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-600/30 text-lg sm:h-12 sm:w-12 sm:text-2xl">👋</div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-100">Welcome back,{" "}
-                <span className="text-violet-400">{userData.data.username}!</span>{" "}👋</h1>
+              <h1 className="whitespace-nowrap text-base font-bold tracking-tight text-slate-100 sm:text-2xl">Welcome back,{" "}
+                <span className="text-violet-400">{userData.data.username}!</span></h1>
               <p className="mt-1 text-sm text-slate-300">
                 Let's get things done!
               </p>
@@ -84,11 +86,25 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* COLUMNS */}
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {/*  EMPTY BOARD  */}
+      {
+        (!isLoading && allTasks.length === 0) ? (
+          <div className="flex flex-col items-center justify-center pt-5 pb-2 text-center">
+            <h2 className="mt-2 text-2xl font-bold text-slate-100">
+              This board is empty
+            </h2>
+            <p className="mt-2 text-base text-slate-400">
+              Get started by adding a task to this board.
+            </p>
+            <button onClick={handleAddTask} className="mt-4 flex cursor-pointer items-center gap-2 rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-950/30 transition hover:bg-violet-500 active:translate-y-px">
+              <span className="text-lg leading-none">+</span>
+              Add your first task
+            </button>
+          </div>
+        ) : ( 
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {/*  TO DO  */}
-        <div className="min-h-[350px] rounded-xl border border-slate-800 bg-[#0F1626] shadow-sm">
+        <div className="flex flex-col h-[67vh] rounded-xl border border-slate-800 bg-[#0F1626] shadow-sm">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-800 px-5 py-3">
             <div className="flex items-center gap-3">
@@ -112,12 +128,12 @@ const Dashboard = () => {
             </button>
           </div>
           {/* Tasks */}
-          <div className="mt-5 space-y-3 px-6">
+          <div className="min-h-0 flex-1 overflow-y-auto scrollbar-none py-5 space-y-3 px-6">
             {
               allTasks.map(task => {
                 if(task.status!== "pending") return null
                 return (
-                  <div key={task._id} className="group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-violet-400/60 hover:shadow-[0_0_18px_rgba(167,139,250,0.22)]">
+                  <div key={task._id} className="cursor-pointer group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-violet-400/60 hover:shadow-[0_0_18px_rgba(167,139,250,0.22)]">
                     <div className="mb-3 flex items-start justify-between gap-4">
                       <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
                       <span className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border ${priorityStyles[task.priority].badge} ${priorityStyles[task.priority].text}`}>
@@ -133,7 +149,7 @@ const Dashboard = () => {
           </div>
         </div>
         {/*  IN PROGRESS  */}
-        <div className="min-h-[350px] rounded-xl border border-slate-800 bg-[#0F1626] shadow-sm">
+        <div className="flex flex-col h-[67vh] rounded-xl border border-slate-800 bg-[#0F1626] shadow-sm">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-800 px-5 py-3">
             <div className="flex items-center gap-3">
@@ -159,12 +175,12 @@ const Dashboard = () => {
             </button>
           </div>
           {/* Tasks */}
-          <div className="mt-5 space-y-3 px-6">
+          <div className="min-h-0 flex-1 overflow-y-auto scrollbar-none py-5 space-y-3 px-6">
             {
               allTasks.map(task => {
                 if(task.status!== "inprogress") return null
                 return (
-                  <div key={task._id} className="group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-yellow-400/60 hover:shadow-[0_0_18px_rgba(250,204,21,0.22)]">
+                  <div key={task._id} className="cursor-pointer group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-yellow-400/60 hover:shadow-[0_0_18px_rgba(250,204,21,0.22)]">
                     <div className="mb-3 flex items-start justify-between gap-4">
                       <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
                       <span className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border ${priorityStyles[task.priority].badge} ${priorityStyles[task.priority].text}`}>
@@ -180,7 +196,7 @@ const Dashboard = () => {
           </div>
         </div>
         {/*  DONE  */}
-        <div className="min-h-[350px] rounded-xl border border-slate-800 bg-[#0F1626] shadow-sm">
+        <div className="flex flex-col h-[67vh] rounded-xl border border-slate-800 bg-[#0F1626] shadow-sm md:col-span-2 xl:col-span-1">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-800 px-5 py-3">
             <div className="flex items-center gap-3">
@@ -199,12 +215,12 @@ const Dashboard = () => {
             </button>
           </div>
           {/* Tasks */}
-          <div className="mt-5 space-y-3 px-6">
+          <div className="min-h-0 flex-1 overflow-y-auto scrollbar-none py-5 space-y-3 px-6">
             {
               allTasks.map(task => {
                 if(task.status!== "complete") return null
                 return (
-                <div key={task._id} className="group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-emerald-400/60 hover:shadow-[0_0_18px_rgba(52,211,153,0.22)]">
+                <div key={task._id} className="cursor-pointer group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-emerald-400/60 hover:shadow-[0_0_18px_rgba(52,211,153,0.22)]">
                     <div className="mb-3 flex items-start justify-between gap-4">
                       <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
                       <span className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border ${priorityStyles[task.priority].badge} ${priorityStyles[task.priority].text}`}>
@@ -220,23 +236,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      {/*  EMPTY BOARD  */}
-      {
-        !isLoading && allTasks.length === 0 && (
-          <div className="flex flex-col items-center justify-center pt-5 pb-2 text-center">
-            <h2 className="mt-2 text-2xl font-bold text-slate-100">
-              This board is empty
-            </h2>
-            <p className="mt-2 text-base text-slate-400">
-              Get started by adding a task to this board.
-            </p>
-            <button onClick={handleAddTask} className="mt-4 flex cursor-pointer items-center gap-2 rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-950/30 transition hover:bg-violet-500 active:translate-y-px">
-              <span className="text-lg leading-none">+</span>
-              Add your first task
-            </button>
-          </div>
-        )
-      }
+      )}
       {/*  ADD TASK MODAL */}
       {
         isAddTaskOpen && (

@@ -34,8 +34,8 @@ const AddNewTask = ({addStatus, onClose, onTaskCreated}) => {
     }
   }
   return (
-    <div onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 px-4 backdrop-blur-[2px]">
-      <form onClick={(e) => e.stopPropagation()} onSubmit={handleCreateTask} className="w-full max-w-lg rounded-2xl border border-slate-800 bg-[#0F1626] p-7 shadow-2xl shadow-black/40">
+    <div onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/65 px-4 backdrop-blur-[2px]">
+      <form onClick={(e) => e.stopPropagation()} onSubmit={handleCreateTask} className="w-full max-w-lg rounded-2xl border border-slate-800 bg-[#0F1626] p-5 shadow-2xl shadow-black/40 sm:p-7">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-bold text-slate-100">Create New Task</h2>
