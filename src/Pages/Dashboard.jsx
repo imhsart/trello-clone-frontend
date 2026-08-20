@@ -3,6 +3,7 @@ import { UserContext } from "../Utils/UserContext"
 import AddNewTask from "../Components/AddNewTask"
 import axios from "axios"
 import toast from "react-hot-toast"
+import TaskCard from "../Components/TaskCard"
 
 
 const Dashboard = () => {
@@ -10,24 +11,8 @@ const Dashboard = () => {
   const { userData } = useContext(UserContext)
   const [isLoading, setIsLoading] = useState(true)
   const [addStatus, setAddStatus] = useState(null)
+  const [taskToEdit, setTaskToEdit] = useState(null)
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false)
-  const priorityStyles = {
-    low: {
-      badge: "border-emerald-400/30 bg-emerald-400/10",
-      text: "text-emerald-300",
-      dot: "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]",
-    },
-    medium: {
-      badge: "border-yellow-400/30 bg-yellow-400/10",
-      text: "text-yellow-300",
-      dot: "bg-yellow-400 shadow-[0_0_6px_rgba(250,204,21,0.9)]",
-    },
-    high: {
-      badge: "border-red-400/30 bg-red-400/10",
-      text: "text-red-300",
-      dot: "bg-red-400 shadow-[0_0_6px_rgba(248,113,113,0.9)]",
-    },
-  };
 
   const getTasksData = useCallback(async () => {
     try{
@@ -50,8 +35,6 @@ const Dashboard = () => {
     setIsAddTaskOpen(true)
     setAddStatus(specialStatus)
   }
-
-
 
   return (
     <div className="flex flex-col flex-1 bg-[#080D1A] px-3 py-6 font-mono md:px-8 xl:px-14">
@@ -132,18 +115,10 @@ const Dashboard = () => {
             {
               allTasks.map(task => {
                 if(task.status!== "pending") return null
-                return (
-                  <div key={task._id} className="cursor-pointer group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-violet-400/60 hover:shadow-[0_0_18px_rgba(167,139,250,0.22)]">
-                    <div className="mb-3 flex items-start justify-between gap-4">
-                      <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
-                      <span className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border ${priorityStyles[task.priority].badge} ${priorityStyles[task.priority].text}`}>
-                        <span className={`h-1.5 w-1.5 rounded-full ${priorityStyles[task.priority].dot}`} />
-                          {task.priority}
-                      </span>
-                    </div>
-                    <p className="text-sm leading-6 text-slate-400">{task.description}</p>
-                  </div>
-                )
+                return <TaskCard key={task._id} task={task} onEdit={() =>{
+                  setTaskToEdit(task)
+                  setIsAddTaskOpen(true)
+                }} />
               })
             }
           </div>
@@ -179,18 +154,10 @@ const Dashboard = () => {
             {
               allTasks.map(task => {
                 if(task.status!== "inprogress") return null
-                return (
-                  <div key={task._id} className="cursor-pointer group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-yellow-400/60 hover:shadow-[0_0_18px_rgba(250,204,21,0.22)]">
-                    <div className="mb-3 flex items-start justify-between gap-4">
-                      <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
-                      <span className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border ${priorityStyles[task.priority].badge} ${priorityStyles[task.priority].text}`}>
-                        <span className={`h-1.5 w-1.5 rounded-full ${priorityStyles[task.priority].dot}`} />
-                          {task.priority}
-                      </span>
-                    </div>
-                    <p className="text-sm leading-6 text-slate-400">{task.description}</p>
-                  </div>
-                )
+                return <TaskCard key={task._id} task={task} onEdit={() =>{
+                  setTaskToEdit(task)
+                  setIsAddTaskOpen(true)
+                }} />
               })
             }
           </div>
@@ -219,18 +186,10 @@ const Dashboard = () => {
             {
               allTasks.map(task => {
                 if(task.status!== "complete") return null
-                return (
-                <div key={task._id} className="cursor-pointer group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 hover:border-emerald-400/60 hover:shadow-[0_0_18px_rgba(52,211,153,0.22)]">
-                    <div className="mb-3 flex items-start justify-between gap-4">
-                      <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
-                      <span className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border ${priorityStyles[task.priority].badge} ${priorityStyles[task.priority].text}`}>
-                        <span className={`h-1.5 w-1.5 rounded-full ${priorityStyles[task.priority].dot}`} />
-                          {task.priority}
-                      </span>
-                    </div>
-                    <p className="text-sm leading-6 text-slate-400">{task.description}</p>
-                  </div>
-                )
+                return <TaskCard key={task._id} task={task} onEdit={() =>{
+                  setTaskToEdit(task)
+                  setIsAddTaskOpen(true)
+                }} />
               })
             }
           </div>
@@ -242,11 +201,13 @@ const Dashboard = () => {
         isAddTaskOpen && (
           <AddNewTask
             addStatus={addStatus}
+            taskToEdit={taskToEdit}
             onClose={() => setIsAddTaskOpen(false)}
-            onTaskCreated={() => {
+            onTaskSaved={() => {
               setIsAddTaskOpen(false)
               getTasksData()
               setAddStatus("")
+              setTaskToEdit(null)
             }}
           />
         )
