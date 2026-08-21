@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [addStatus, setAddStatus] = useState(null)
   const [taskToEdit, setTaskToEdit] = useState(null)
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false)
+  const [taskToDelete, setTaskToDelete] = useState(null)
 
   const getTasksData = useCallback(async () => {
     try{
@@ -30,6 +31,19 @@ const Dashboard = () => {
   useEffect(() => {
     getTasksData()
   }, [getTasksData])
+
+  async function handleDeleteTask(){
+    try{
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/tasks/delete/${taskToDelete._id}`, {withCredentials: true})
+      toast.success(response.data.message)
+      setTaskToDelete(null)
+      getTasksData()
+    }
+    catch(error){
+      console.log(error)
+      toast.error(error.response?.data?.message || 'Failed to delete task!')
+    }
+  }
 
   function handleAddTask(specialStatus) {
     setIsAddTaskOpen(true)
@@ -118,7 +132,9 @@ const Dashboard = () => {
                 return <TaskCard key={task._id} task={task} onEdit={() =>{
                   setTaskToEdit(task)
                   setIsAddTaskOpen(true)
-                }} />
+                }}
+                onDelete={() => setTaskToDelete(task)}
+                />
               })
             }
           </div>
@@ -157,7 +173,9 @@ const Dashboard = () => {
                 return <TaskCard key={task._id} task={task} onEdit={() =>{
                   setTaskToEdit(task)
                   setIsAddTaskOpen(true)
-                }} />
+                }}
+                onDelete={() => setTaskToDelete(task)}
+                />
               })
             }
           </div>
@@ -189,7 +207,9 @@ const Dashboard = () => {
                 return <TaskCard key={task._id} task={task} onEdit={() =>{
                   setTaskToEdit(task)
                   setIsAddTaskOpen(true)
-                }} />
+                }}
+                onDelete={() => setTaskToDelete(task)}
+                />
               })
             }
           </div>
@@ -210,6 +230,25 @@ const Dashboard = () => {
               setTaskToEdit(null)
             }}
           />
+        )
+      }
+      {/* delete task modal */}
+      {
+        taskToDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 px-4 backdrop-blur-[2px]" onClick={() => setTaskToDelete(null)}> 
+            <div onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl border border-slate-800 bg-[#0F1626] p-6 shadow-2xl shadow-black/40">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-lg font-bold text-slate-100">Delete Task</h2>
+                <button type="button" onClick={() => setTaskToDelete(null)} className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-xl text-slate-400 transition hover:bg-slate-800 hover:text-slate-200">×</button>
+              </div>
+              <p className="text-sm leading-6 text-slate-400">Are you sure you want to delete{" "}
+                <span className="font-semibold text-slate-200">"{taskToDelete.title}"</span>? This action cannot be undone.</p>
+              <div className="mt-6 flex items-center justify-end gap-3">
+                <button type="button" className="cursor-pointer rounded-lg border border-slate-700 bg-transparent px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white active:translate-y-px" onClick={() => setTaskToDelete(null)}>Cancel</button>
+                <button type="button" className="cursor-pointer rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-red-950/30 transition hover:bg-red-500 active:translate-y-px" onClick={handleDeleteTask}>Delete</button>
+              </div>
+            </div>
+          </div>
         )
       }
     </div>

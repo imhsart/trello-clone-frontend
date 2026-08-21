@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AddNewTask from "./AddNewTask";
 
-const TaskCard = ({task, onEdit}) => {
+const TaskCard = ({task, onEdit, onDelete}) => {
   const [cardMenuToggle, setCardMenuToggle] = useState(false)
   const [showViewModal, setShowViewModal] = useState(false)
 
@@ -40,7 +40,7 @@ const TaskCard = ({task, onEdit}) => {
   return (
     <>
     <div className={`cursor-pointer relative group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 ${statusStyles[task.status].border} ${statusStyles[task.status].shadow}`}>
-      <div className="mb-2 flex items-start justify-between gap-4">
+      <div className="mb-2 flex items-center justify-between gap-4">
         <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
         <button onClick={() => setCardMenuToggle(prev => !prev)} className="flex w-8 h-8 shrink-0 items-center justify-center rounded-lg text-lg font-bold leading-none text-slate-400 cursor-pointer transition hover:bg-slate-700 hover:text-white">⋮</button>
       </div>
@@ -61,8 +61,11 @@ const TaskCard = ({task, onEdit}) => {
             <button onClick={() => {
               setCardMenuToggle(false)
               onEdit()
-              }} className="w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white">Edit</button>
-            <button className="w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white">Delete</button>
+            }} className="w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white">Edit</button>
+            <button onClick={() => {
+              onDelete()
+              setCardMenuToggle(false)
+            }} className="w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white">Delete</button>
           </div>
         )
       }
