@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Signup from "./Pages/Signup";
 import Login from "./Pages/Login";
 import Dashboard from "./Pages/Dashboard";
-import Navbar from "./Components/Navbar";
+import Profile from "./Pages/Profile";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import DashboardLayout from "./Layouts/DashboardLayout";
 import { Toaster } from "react-hot-toast";
@@ -21,9 +21,8 @@ const App = () => {
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
-            {/* <Route path="starred" element={<Starred />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings />} /> */}
+            {/* <Route path="settings" element={<Settings />} /> */}
           </Route>
         </Route>
       </Routes>

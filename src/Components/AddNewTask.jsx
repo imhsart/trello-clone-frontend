@@ -26,6 +26,7 @@ const AddNewTask = ({addStatus, taskToEdit, onClose, onTaskSaved}) => {
       onTaskSaved()
     }
     catch(error){
+      console.log(error)
       toast.error(error.response?.data?.message || 'Failed to create task')
     }
   }
