@@ -3,12 +3,14 @@ import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
 import { useUserContext } from "../Utils/UserContext"
 import { useNavigate } from "react-router-dom"
+import ImageUpload from "../Components/ImageUpload"
 
 const Profile = () => {
   const { userData } = useUserContext()
   const [tasks, setTasks] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const navigate = useNavigate()
+  const [selectedImage, setSelectedImage] = useState(null)
   const totalTasks = tasks?.length ?? 0
   const completedTasks = tasks?.filter(task => task.status === 'complete').length ?? 0
   const completionRate = totalTasks === 0 ? 0 : Math.round((completedTasks/totalTasks)*100)
@@ -47,7 +49,7 @@ const Profile = () => {
     )
   }
   return (
-    <div className="min-h-full bg-[#080D1A] px-4 py-6 font-mono sm:px-6 lg:px-8">
+    <div className="flex-1 px-4 py-6 font-mono sm:px-6 lg:px-8">
       {/*  PROFILE HEADER */}
       <div className="mb-6 flex min-h-[280px] flex-col gap-8 rounded-xl border border-slate-800 bg-gradient-to-r from-[#0D1629] via-[#10152B] to-[#211044] px-6 py-8 shadow-sm sm:px-8 lg:flex-row lg:items-center lg:px-10">
         {/* Left side - Profile picture + quick details */}
@@ -56,19 +58,17 @@ const Profile = () => {
           <div className="relative shrink-0">
             <div className="h-36 w-36 overflow-hidden rounded-full border-2 border-violet-400/50 bg-slate-800 shadow-lg shadow-violet-950/30 sm:h-40 sm:w-40">
               <img
-                src="https://via.placeholder.com/160"
+                src={selectedImage || userData.data.profilePicture || "https://img.icons8.com/nolan/720/user-default.png"}
                 className="h-full w-full object-cover"
               />
             </div>
-            <button onClick={() => navigate("/settings")} className="absolute bottom-1 right-1 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border-4 border-[#10152B] bg-violet-600 text-white shadow-lg transition hover:bg-violet-500">
-              📷
-            </button>
+           <ImageUpload selectedImage={selectedImage} setSelectedImage={setSelectedImage} mode="camera" />
           </div>
 
           {/* Name */}
           <div className="min-w-0">
             <h1 className="text-2xl font-bold tracking-tight text-slate-100 sm:text-3xl">{userData.data.firstname || "-"}{" "}{userData.data.lastname || "-"}</h1>
-            <p className="mt-1 text-sm font-semibold text-violet-400 sm:text-base">{userData.data.username || "-"}</p>
+            <p className="mt-1 text-sm font-semibold text-violet-400 sm:text-base">{`@${userData.data.username}` || "-"}</p>
             <p className="mt-4 max-w-sm text-sm leading-6 text-slate-400">Stay focused, stay consistent,<br />and make progress every day.</p>
           </div>
         </div>
@@ -82,7 +82,7 @@ const Profile = () => {
             <div className="group flex items-center gap-4">
               <span className="w-24 shrink-0 text-sm text-slate-400">Username</span>
               <div className="flex min-w-0 items-center gap-2">
-                <span className="truncate text-sm font-medium text-slate-100">{userData.data.username || "-"}</span>
+                <span className="truncate text-sm font-medium text-slate-100">{`@${userData.data.username}` || "-"}</span>
                 <button type="button" aria-label="Edit username" className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-slate-500 opacity-100 transition hover:bg-slate-800 hover:text-violet-400 sm:opacity-0 sm:group-hover:opacity-100" onClick={() => navigate("/settings")}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 20h9" />
@@ -132,7 +132,7 @@ const Profile = () => {
           </div>
           <div className="flex items-center justify-between gap-4 border-b border-slate-800 py-4">
             <span className="text-sm text-slate-400">Username</span>
-            <span className="text-sm font-medium text-slate-100">{userData.data.username || "-"}</span>
+            <span className="text-sm font-medium text-slate-100">{`@${userData.data.username}` || "-"}</span>
           </div>
           <div className="flex items-center justify-between gap-4 border-b border-slate-800 py-4">
             <span className="text-sm text-slate-400">Email</span>

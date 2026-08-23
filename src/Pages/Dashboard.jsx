@@ -52,7 +52,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex flex-col flex-1 bg-[#080D1A] px-3 py-6 font-mono md:px-8 xl:px-14">
+    <div className="flex flex-col flex-1 px-3 py-6 font-mono md:px-8 xl:px-14">
       <div className="relative mb-8 overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-r from-[#0F172A] via-[#15132F] to-[#211044] px-6 py-5">
         {/* Decorative purple glow */}
         <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-96 rounded-full bg-violet-600/10 blur-3xl" />
@@ -71,7 +71,7 @@ const Dashboard = () => {
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-600/30 text-lg sm:h-12 sm:w-12 sm:text-2xl">👋</div>
             <div>
               <h1 className="whitespace-nowrap text-base font-bold tracking-tight text-slate-100 sm:text-2xl">Welcome back,{" "}
-                <span className="text-violet-400">{userData.data.username}!</span></h1>
+                <span className="text-violet-400">@{userData.data.username}!</span></h1>
               <p className="mt-1 text-sm text-slate-300">
                 Let's get things done!
               </p>
