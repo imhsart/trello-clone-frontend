@@ -26,6 +26,7 @@ const Signup = () => {
   async function handleFormSubmit(e){
     e.preventDefault()
      if(!(userData.firstname && userData.lastname && userData.username && userData.email && userData.DOB && userData.gender && userData.password)){
+      toast.error("Please fill in all the fields!")
       return
      }
      try{
