@@ -36,10 +36,13 @@ const TaskCard = ({task, onEdit, onDelete}) => {
       shadow: "hover:shadow-[0_0_18px_rgba(52,211,153,0.22)]"
     }
   };
+  function handleDragStart(e){
+    e.dataTransfer.setData("taskId",task._id)
+  }
 
   return (
     <>
-    <div className={`cursor-pointer relative group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 ${statusStyles[task.status].border} ${statusStyles[task.status].shadow}`}>
+    <div draggable onDragStart={handleDragStart} className={`cursor-pointer relative group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 ${statusStyles[task.status].border} ${statusStyles[task.status].shadow}`}>
       <div className="mb-2 flex items-center justify-between gap-4">
         <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
         <button onClick={() => setCardMenuToggle(prev => !prev)} className="flex w-8 h-8 shrink-0 items-center justify-center rounded-lg text-lg font-bold leading-none text-slate-400 cursor-pointer transition hover:bg-slate-700 hover:text-white">⋮</button>

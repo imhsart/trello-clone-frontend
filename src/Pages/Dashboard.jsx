@@ -51,6 +51,31 @@ const Dashboard = () => {
     setAddStatus(specialStatus)
   }
 
+  function handleDragOver(e){
+    e.preventDefault()
+  }
+  async function handleDrop(e, colStatus){
+    e.preventDefault()
+    const taskId = e.dataTransfer.getData("taskId")
+    const taskToDrag = allTasks.find(item => item._id === taskId)
+    if(!taskToDrag || taskToDrag.status === colStatus){
+      return
+    }
+    try{
+      const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/tasks/update/${taskId}`, {
+        title: taskToDrag.title,
+        description: taskToDrag.description,
+        priority: taskToDrag.priority,
+        status: colStatus
+      }, {withCredentials: true})
+      getTasksData()
+    }
+    catch(error){
+      console.log(error)
+      toast.error(error.response?.data?.message || "Failed to drag and drop the task")
+    }
+  }
+
   return (
     <div className="flex flex-col flex-1 px-3 py-6 font-mono md:px-8 xl:px-14">
       <div className="relative mb-8 overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-r from-[#0F172A] via-[#15132F] to-[#211044] px-6 py-5">
@@ -126,7 +151,7 @@ const Dashboard = () => {
             </button>
           </div>
           {/* Tasks */}
-          <div className="min-h-0 flex-1 overflow-y-auto scrollbar-none py-5 space-y-3 px-6">
+          <div onDragOver={handleDragOver} onDrop={(e) => handleDrop(e,"pending")} className="min-h-0 flex-1 overflow-y-auto scrollbar-none py-5 space-y-3 px-6">
             {
               allTasks.map(task => {
                 if(task.status!== "pending") return null
@@ -167,7 +192,7 @@ const Dashboard = () => {
             </button>
           </div>
           {/* Tasks */}
-          <div className="min-h-0 flex-1 overflow-y-auto scrollbar-none py-5 space-y-3 px-6">
+          <div onDragOver={handleDragOver} onDrop={(e) => handleDrop(e,"inprogress")} className="min-h-0 flex-1 overflow-y-auto scrollbar-none py-5 space-y-3 px-6">
             {
               allTasks.map(task => {
                 if(task.status!== "inprogress") return null
@@ -201,7 +226,7 @@ const Dashboard = () => {
             </button>
           </div>
           {/* Tasks */}
-          <div className="min-h-0 flex-1 overflow-y-auto scrollbar-none py-5 space-y-3 px-6">
+          <div onDragOver={handleDragOver} onDrop={(e) => handleDrop(e,"complete")} className="min-h-0 flex-1 overflow-y-auto scrollbar-none py-5 space-y-3 px-6">
             {
               allTasks.map(task => {
                 if(task.status!== "complete") return null
