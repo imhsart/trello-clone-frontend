@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [taskToEdit, setTaskToEdit] = useState(null)
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false)
   const [taskToDelete, setTaskToDelete] = useState(null)
+  const [openMenuId, setOpenMenuId] = useState(null)
 
   const getTasksData = useCallback(async () => {
     try{
@@ -79,11 +80,9 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col flex-1 px-3 py-6 font-mono md:px-8 xl:px-14">
       <div className="relative mb-8 overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-r from-[#0F172A] via-[#15132F] to-[#211044] px-6 py-5">
-        {/* Decorative purple glow */}
         <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-96 rounded-full bg-violet-600/10 blur-3xl" />
         <div className="pointer-events-none absolute right-24 -top-16 h-48 w-48 rounded-full bg-purple-500/10 blur-3xl" />
         <div className="pointer-events-none absolute right-56 top-8 h-24 w-24 rounded-full bg-violet-400/10 blur-2xl" />
-        {/* Small decorative stars */}
         <div className="pointer-events-none absolute right-[28%] top-7 text-violet-500/20">✦</div>
         <div className="pointer-events-none absolute right-[20%] top-16 text-violet-400/20">✦</div>
         <div className="pointer-events-none absolute right-[35%] top-12 text-violet-400/10">✦</div>
@@ -119,7 +118,7 @@ const Dashboard = () => {
             <p className="mt-2 text-base text-slate-400">
               Get started by adding a task to this board.
             </p>
-            <button onClick={handleAddTask} className="mt-4 flex cursor-pointer items-center gap-2 rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-950/30 transition hover:bg-violet-500 active:translate-y-px">
+            <button onClick={() => handleAddTask("")} className="mt-4 flex cursor-pointer items-center gap-2 rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-950/30 transition hover:bg-violet-500 active:translate-y-px">
               <span className="text-lg leading-none">+</span>
               Add your first task
             </button>
@@ -160,6 +159,8 @@ const Dashboard = () => {
                   setIsAddTaskOpen(true)
                 }}
                 onDelete={() => setTaskToDelete(task)}
+                isMenuOpen={openMenuId === task._id}
+                setOpenMenuId={setOpenMenuId}
                 />
               })
             }
@@ -201,6 +202,8 @@ const Dashboard = () => {
                   setIsAddTaskOpen(true)
                 }}
                 onDelete={() => setTaskToDelete(task)}
+                isMenuOpen={openMenuId === task._id}
+                setOpenMenuId={setOpenMenuId}
                 />
               })
             }
@@ -235,6 +238,8 @@ const Dashboard = () => {
                   setIsAddTaskOpen(true)
                 }}
                 onDelete={() => setTaskToDelete(task)}
+                isMenuOpen={openMenuId === task._id}
+                setOpenMenuId={setOpenMenuId}
                 />
               })
             }

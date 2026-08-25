@@ -1,9 +1,10 @@
 import { useState } from "react";
-import AddNewTask from "./AddNewTask";
 
-const TaskCard = ({task, onEdit, onDelete}) => {
-  const [cardMenuToggle, setCardMenuToggle] = useState(false)
+const TaskCard = ({task, onEdit, onDelete, isMenuOpen, setOpenMenuId}) => {
   const [showViewModal, setShowViewModal] = useState(false)
+
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragPos, setDragPos] = useState({x:0, y:0})
 
   const priorityStyles = {
     low: {
@@ -38,14 +39,33 @@ const TaskCard = ({task, onEdit, onDelete}) => {
   };
   function handleDragStart(e){
     e.dataTransfer.setData("taskId",task._id)
+
+    //blank the native ghost so the browser draws nothing
+    const emptyImg = new Image()
+    emptyImg.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7"
+    e.dataTransfer.setDragImage(emptyImg, 0, 0)
+
+    setDragPos({x: e.clientX, y: e.clientY})
+    setIsDragging(true)
+  }
+  function handleDrag(e){
+    if(e.clientX === 0 && e.clientY === 0) return
+    setDragPos({x: e.clientX, y: e.clientY})
+  }
+  function handleDragEnd(){
+    setIsDragging(false)
+  }
+  function handleMenuClick(e){
+    e.stopPropagation()
+    setOpenMenuId(prev => prev===task._id ? null : task._id)
   }
 
   return (
     <>
-    <div draggable onDragStart={handleDragStart} className={`cursor-pointer relative group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 ${statusStyles[task.status].border} ${statusStyles[task.status].shadow}`}>
+    <div draggable onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd} className={`cursor-pointer relative group rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-md shadow-black/20 transition-all duration-300 ${statusStyles[task.status].border} ${statusStyles[task.status].shadow} ${isDragging ? "opacity-30" : ""}`}>
       <div className="mb-2 flex items-center justify-between gap-4">
         <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
-        <button onClick={() => setCardMenuToggle(prev => !prev)} className="flex w-8 h-8 shrink-0 items-center justify-center rounded-lg text-lg font-bold leading-none text-slate-400 cursor-pointer transition hover:bg-slate-700 hover:text-white">⋮</button>
+        <button onClick={handleMenuClick} className="flex w-8 h-8 shrink-0 items-center justify-center rounded-lg text-lg font-bold leading-none text-slate-400 cursor-pointer transition hover:bg-slate-700 hover:text-white">⋮</button>
       </div>
       <div className="flex items-start justify-between gap-4">
         <p className="min-w-0 text-sm truncate leading-6 text-slate-400">{task.description}</p>
@@ -55,24 +75,42 @@ const TaskCard = ({task, onEdit, onDelete}) => {
         </span>
       </div>
       {
-        cardMenuToggle && (
+        isMenuOpen && (
           <div className="absolute right-5 top-14 z-20 w-28 overflow-hidden rounded-lg border border-slate-700 bg-[#0B1020] p-1 shadow-xl shadow-black/40">
             <button onClick={() => {
               setShowViewModal(true)
-              setCardMenuToggle(false)
+              setOpenMenuId(null)
             }} className="w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white">View</button>
             <button onClick={() => {
-              setCardMenuToggle(false)
+              setOpenMenuId(null)
               onEdit()
             }} className="w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white">Edit</button>
             <button onClick={() => {
               onDelete()
-              setCardMenuToggle(false)
+              setOpenMenuId(null)
             }} className="w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white">Delete</button>
           </div>
         )
       }
     </div>
+    {/* floating drag preview */}
+    {
+      isDragging && (
+         <div className="fixed z-[999] pointer-events-none w-72 rotate-2 rounded-xl border border-slate-600/80 bg-[#1A2340] p-5 shadow-2xl shadow-black/50" style={{ left: dragPos.x + 16, top: dragPos.y + 16 }}>
+          <div className="mb-2 flex items-center justify-between gap-4">
+            <h3 className="text-base font-semibold text-slate-100">{task.title}</h3>
+            <span className="flex w-8 h-8 shrink-0 items-center justify-center text-lg font-bold leading-none text-slate-400">⋮</span>
+          </div>
+          <div className="flex items-start justify-between gap-4">
+            <p className="min-w-0 text-sm truncate leading-6 text-slate-400">{task.description}</p>
+            <span className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border ${priorityStyles[task.priority].badge} ${priorityStyles[task.priority].text}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${priorityStyles[task.priority].dot}`} />
+              {task.priority}
+            </span>
+          </div>
+        </div>
+      )
+    }
     {
         showViewModal && (
           <div onClick={() => setShowViewModal(false)} className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 px-4 backdrop-blur-[2px]">

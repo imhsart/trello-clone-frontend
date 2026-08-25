@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-
-// check th code in the repository and video starts from 20;00
+import { useUserContext } from "../Utils/UserContext";
 
 
 const Login = () => {
@@ -12,6 +11,8 @@ const Login = () => {
     username: '',
     password: ''
   })
+  const [loading, setLoading] = useState(false)
+  const {checkAuth} = useUserContext()
   const navigate = useNavigate()
   function handleInputChange(e){
     setUserInputData({
@@ -21,23 +22,32 @@ const Login = () => {
   }
   async function handleFormSubmit(e){
     e.preventDefault()
+    if(loading) return 
+    if(!userInputData.email?.trim() && !userInputData.username?.trim() && !userInputData.password?.trim()){
+      toast.error("Please fill in the details!")
+      return
+    }
+    setLoading(true)
     try{
       if(userInputData.password && (userInputData.email || userInputData.username)){
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login`, userInputData, {withCredentials: true})
         toast.success(response.data.message)
+        await checkAuth()
         navigate('/dashboard')
       }
     }
     catch(error){
       console.log(error)
       toast.error(error?.response?.data?.message || "Login failed. Please try again.")
+    }finally{
+      setUserInputData({email: '', username: '', password: ''})
+      setLoading(false)
     }
-    setUserInputData({email: '', username: '', password: ''})
   }
 
   return (
     <div className="min-h-screen bg-[#F3F4FF] flex items-center justify-center px-4 py-10">
-      <form onSubmit={handleFormSubmit} className="w-full max-w-xl bg-white px-7 py-12 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.12)] sm:px-8">
+      <form onSubmit={handleFormSubmit} className="w-full max-w-xl bg-white px-7 py-12 rounded-lg sm:rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.12)] sm:px-8">
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-slate-900">Welcome Back!</h1>
           <p className="mt-1 text-sm text-slate-500">Login to continue to your account</p>
@@ -59,7 +69,7 @@ const Login = () => {
           <label htmlFor="password" className="text-sm font-medium text-slate-800">Password</label>
           <input type="password" name="password" id="password" placeholder="*********" value={userInputData.password} onChange={handleInputChange} className="h-10 rounded-lg border border-slate-200 px-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-100" />
         </div>
-        <button type="submit" className="h-10 w-full rounded-lg bg-gradient-to-r from-violet-600 to-blue-500 text-base font-semibold text-white shadow-md shadow-violet-200 cursor-pointer transition hover:from-violet-700 hover:to-blue-600 active:scale-[0.99]">Login</button>
+        <button type="submit" disabled={loading} className="h-10 w-full rounded-lg bg-gradient-to-r from-violet-600 to-blue-500 text-base font-semibold text-white shadow-md shadow-violet-200 cursor-pointer transition hover:from-violet-700 hover:to-blue-600 active:scale-[0.99]">{loading ? "Logging in..." : "Login"} </button>
         <div className="m-5 h-px bg-slate-300" />
         <div className="text-center text-sm text-slate-600">
           Don't have an account?{" "}

@@ -7,7 +7,7 @@ import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 
 const Settings = () => {
-  const { userData } = useUserContext()
+  const { userData, setUserData } = useUserContext()
   const [isEditUser, setIsEditUser] = useState(false)
   const [isEditOrg, setIsEditOrg] = useState(false)
   const [isEditPassword, setIsEditPassword] = useState(false)
@@ -23,6 +23,7 @@ const Settings = () => {
     try{
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/logout`,null, {withCredentials: true})
       toast.success(response.data.message)
+      setUserData(null)
       navigate("/login")
     } 
     catch(error){
@@ -104,31 +105,6 @@ const Settings = () => {
             }
         </div>
       </div>
-      {/* Preferences */}
-      {/* <div className="mb-6 rounded-xl border border-slate-800 bg-[#0D1626] shadow-sm">
-        <div className="border-b border-slate-800 px-6 py-5 sm:px-8">
-          <h2 className="text-lg font-bold text-slate-100">Preferences</h2>
-          <p className="mt-1 text-sm text-slate-400">Customize your experience.</p>
-        </div>
-        <div className="px-6 py-2 sm:px-8">
-          <div className="flex items-center justify-between gap-4 border-b border-slate-800 py-5">
-            <div>
-              <h3 className="text-sm font-medium text-slate-100">Theme</h3>
-              <p className="mt-1 text-xs text-slate-500">Choose your preferred appearance.</p>
-            </div>
-            <button type="button" className="cursor-pointer rounded-lg border border-slate-700 bg-[#151F36] px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-violet-500/50 hover:bg-violet-500/10 hover:text-violet-300">Dark</button>
-          </div>
-          <div className="flex items-center justify-between gap-4 py-5">
-            <div>
-              <h3 className="text-sm font-medium text-slate-100">Notifications</h3>
-              <p className="mt-1 text-xs text-slate-500">Manage notification preferences.</p>
-            </div>
-            <button type="button" className="relative h-6 w-11 cursor-pointer rounded-full bg-violet-600 transition hover:bg-violet-500">
-              <span className="absolute right-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm" />
-            </button>
-          </div>
-        </div>
-      </div> */}
       {/* Security */}
       <div className="mb-6 rounded-xl border border-slate-800 bg-[#0D1626] shadow-sm">
         <div className="border-b border-slate-800 px-6 py-5 sm:px-8">

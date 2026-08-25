@@ -1,4 +1,3 @@
-import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Signup from "./Pages/Signup";
 import Login from "./Pages/Login";
@@ -8,17 +7,18 @@ import Settings from "./Pages/Settings";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import DashboardLayout from "./Layouts/DashboardLayout";
 import { Toaster } from "react-hot-toast";
+import PublicRoute from "./Components/PublicRoutes";
 
 const App = () => {
   return (
     <>
       <Toaster />
       <Routes>
-        
         <Route path="/" element={<Navigate to={'/dashboard'} replace />} />
-
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
+        <Route element={<PublicRoute />}>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
             <Route path="dashboard" element={<Dashboard />} />

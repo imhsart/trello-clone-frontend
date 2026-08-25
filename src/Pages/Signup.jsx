@@ -13,6 +13,7 @@ const Signup = () => {
     gender: '',
     password: '',
   })
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   function handleInputChange(e){
@@ -25,26 +26,29 @@ const Signup = () => {
   }
   async function handleFormSubmit(e){
     e.preventDefault()
-     if(!(userData.firstname && userData.lastname && userData.username && userData.email && userData.DOB && userData.gender && userData.password)){
+    if(loading) return
+    if(!(userData.firstname && userData.lastname && userData.username && userData.email && userData.DOB && userData.gender && userData.password)){
       toast.error("Please fill in all the fields!")
       return
-     }
+    }
+    setLoading(true)
      try{
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/signup`, userData)
-        toast.success(response.data.message)
+        toast.success(`${response.data.message} Please log in!`)
+        navigate("/login")
      }
      catch(error){
         console.log(error)
         toast.error(error?.response?.data?.message || "Sign Up failed. Please try again.")
      }finally{
         setUserData({firstname: '', lastname: '', username: '', email: '', DOB: '', gender: '', password: ''})
+        setLoading(false)
      }
   }
 
   return (
     <div className="min-h-screen bg-[#F3F4FF] flex items-center justify-center px-4 py-10">
-      {/* if circle bg isnt needed , change rounded-lg and sm:px-12 */}
-      <form onSubmit={handleFormSubmit} className="w-full max-w-2xl bg-white px-7 py-7 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.12)] sm:px-18">
+      <form onSubmit={handleFormSubmit} className="w-full max-w-2xl bg-white px-7 py-7 rounded-lg sm:rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.12)] sm:px-18">
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-slate-900">Create Your Account</h1>
           <p className="mt-1 text-sm text-slate-500">Join us today! It's quick and easy.</p>
@@ -86,7 +90,7 @@ const Signup = () => {
             </select>
           </div>
         </div>
-        <button type="submit" className="h-10 w-full rounded-lg bg-gradient-to-r from-violet-600 to-blue-500 text-base font-semibold text-white shadow-md shadow-violet-200 cursor-pointer transition hover:from-violet-700 hover:to-blue-600 active:scale-[0.99]">Create Account</button>
+        <button type="submit" disabled={loading} className="h-10 w-full rounded-lg bg-gradient-to-r from-violet-600 to-blue-500 text-base font-semibold text-white shadow-md shadow-violet-200 cursor-pointer transition hover:from-violet-700 hover:to-blue-600 active:scale-[0.99]">{loading ? "Signing up..." : "Create Account"}</button>
         <div className="my-4 flex items-center gap-4 px-6">
           <div className="h-px flex-1 bg-slate-300"></div>
             <span className="text-sm text-slate-400">or</span>
