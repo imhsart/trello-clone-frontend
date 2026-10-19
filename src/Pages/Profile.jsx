@@ -15,7 +15,7 @@ const Profile = () => {
   const completedTasks = tasks?.filter(task => task.status === 'complete').length ?? 0
   const completionRate = totalTasks === 0 ? 0 : Math.round((completedTasks/totalTasks)*100)
   const createdDate = userData?.data?.createdAt ? new Date(userData.data.createdAt) : null
-  const memberSince = createdDate.toLocaleDateString("en-US", {
+  const memberSince = createdDate?.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric"
