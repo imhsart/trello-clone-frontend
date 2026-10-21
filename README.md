@@ -19,10 +19,13 @@ TaskFlow is a full-stack task management app with a drag-and-drop Kanban board. 
 
 ![Dashboard](docs/screenshots/dashboard-desktop.png)
 
-| Profile |
+| | |
 | --- | --- |
-| ![Profile](docs/screenshots/profile-desktop-1.png)  | ![Profile](docs/screenshots/profile-desktop-2.png) |
-| ![Dashboard](docs/screenshots/dashboard-mobile.png) | ![Profile](docs/screenshots/profile-mobile.png)    |
+| ![Dashboard mobile](docs/screenshots/dashboard-mobile.png) | ![Profile mobile](docs/screenshots/profile-mobile.png) |
+
+![Profile tasks](docs/screenshots/profile-desktop-2.png)
+
+![Settings](docs/screenshots/settings-desktop.png)
 
 ## Tech Stack
 
