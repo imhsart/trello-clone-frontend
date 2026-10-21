@@ -61,7 +61,6 @@ const ImageUpload = ({selectedImage, setSelectedImage, mode="camera"}) => {
       toast.success(bResponse.data.message)
     }
     catch(error){
-      console.log(error)
       toast.error(error.response?.data?.message || "Failed to update details!")
     }
     finally{

@@ -35,12 +35,13 @@ const Login = () => {
         await checkAuth()
         navigate('/dashboard')
       }
+      else{
+        toast.error("Enter your email or username along with your password!")
+      }
     }
     catch(error){
-      console.log(error)
       toast.error(error?.response?.data?.message || "Login failed. Please try again.")
     }finally{
-      setUserInputData({email: '', username: '', password: ''})
       setLoading(false)
     }
   }
@@ -54,7 +55,7 @@ const Login = () => {
         </div>
         <div className="mb-3 flex flex-col gap-2">
           <label htmlFor="email" className="text-sm font-medium text-slate-800">Email</label>
-          <input type="email" name="email" id="email" placeholder="wang@nihao.com" value={userInputData.email} onChange={handleInputChange} className="h-10 rounded-lg border border-slate-200 px-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-100" />
+          <input type="email" name="email" id="email" placeholder="abc@gmail.com" value={userInputData.email} onChange={handleInputChange} className="h-10 rounded-lg border border-slate-200 px-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-100" />
         </div>
         <div className="my-4 flex items-center gap-5">
           <div className="h-px flex-1 bg-slate-300" />
@@ -63,7 +64,7 @@ const Login = () => {
         </div>
         <div className="mb-3 flex flex-col gap-2">
           <label htmlFor="username" className="text-sm font-medium text-slate-800">Username</label>
-          <input type="text" name="username" id="username" placeholder="wangnihao" value={userInputData.username} onChange={handleInputChange} className="h-10 rounded-lg border border-slate-200 px-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-100" />
+          <input type="text" name="username" id="username" placeholder="firstuser12" value={userInputData.username} onChange={handleInputChange} className="h-10 rounded-lg border border-slate-200 px-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-2 focus:ring-violet-100" />
         </div>
         <div className="mb-3 flex flex-col gap-2">
           <label htmlFor="password" className="text-sm font-medium text-slate-800">Password</label>

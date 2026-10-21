@@ -29,7 +29,6 @@ const EditableField = ({label, value, field, onSave, onCancel}) => {
       onSave()
     }
     catch(error){
-      console.log(error)
       toast.error(error.response?.data?.message || "Failed to update details!")
     }
   }

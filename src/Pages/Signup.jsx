@@ -38,10 +38,8 @@ const Signup = () => {
         navigate("/login")
      }
      catch(error){
-        console.log(error)
         toast.error(error?.response?.data?.message || "Sign Up failed. Please try again.")
      }finally{
-        setUserData({firstname: '', lastname: '', username: '', email: '', DOB: '', gender: '', password: ''})
         setLoading(false)
      }
   }

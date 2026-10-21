@@ -23,7 +23,6 @@ const Dashboard = () => {
       setAllTasks(response.data.data)
     }
     catch(error){
-      console.log(error)
       toast.error(error.response?.data?.message || 'Failed to fetch tasks.')
     }finally{
       setIsLoading(false)
@@ -42,7 +41,6 @@ const Dashboard = () => {
       getTasksData()
     }
     catch(error){
-      console.log(error)
       toast.error(error.response?.data?.message || 'Failed to delete task!')
     }
   }
@@ -72,7 +70,6 @@ const Dashboard = () => {
       getTasksData()
     }
     catch(error){
-      console.log(error)
       toast.error(error.response?.data?.message || "Failed to drag and drop the task")
     }
   }

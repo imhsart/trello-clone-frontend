@@ -1,13 +1,20 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useUserContext } from "../Utils/UserContext"
 import taskFlowLogo from '../Assets/taskflow_logo.png'
 
 const Navbar = () => {
   const [isHamOPen, setIsHamOpen] = useState(false)
+  const { userData } = useUserContext()
   const navigate = useNavigate()
 
+  const profilePicture = userData?.data?.profilePicture
+  const firstInitial = userData?.data?.firstname?.[0]?.toUpperCase() ?? ""
+  const lastInitial = userData?.data?.lastname?.[0]?.toLowerCase() ?? ""
+  const initials = firstInitial + lastInitial || "?"
+
   return (
-    <nav className="relative flex h-16 items-center justify-between border-b border-slate-200 bg-white px-3 md:px-8 shadow-sm dark:border-slate-800 dark:bg-[#0B1020]">
+    <nav className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-3 md:px-8 shadow-sm dark:border-slate-800 dark:bg-[#0B1020]">
       {/* Left */}
       <div className="flex items-center gap-3 md:gap-8">
         {/* Logo */}
@@ -25,7 +32,11 @@ const Navbar = () => {
       {/* Right */}
       <div className="flex items-center gap-5">
         {/* Avatar */}
-        <div onClick={() => navigate("/profile")} className="flex h-9 w-9 items-center cursor-pointer justify-center rounded-full bg-violet-600 text-sm font-semibold text-white shadow-sm">Pr</div>
+        <div onClick={() => navigate("/profile")} className="flex h-9 w-9 items-center cursor-pointer justify-center rounded-full bg-violet-600 text-sm font-semibold text-white shadow-sm">
+          {profilePicture 
+            ? <img src={profilePicture} alt="Profile" className="h-full w-full object-cover rounded-full" />
+            : initials}
+        </div>
         {/* hamburger menu button on smaller screens */}
         <button onClick={() => setIsHamOpen(prev => !prev)} className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-slate-300 hover:bg-slate-800 md:hidden">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
